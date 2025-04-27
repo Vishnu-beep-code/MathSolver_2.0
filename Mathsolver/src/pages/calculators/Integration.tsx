@@ -53,7 +53,6 @@ const Integration = () => {
       if (powerMatch) {
         const power = parseInt(powerMatch[1]);
         const newPower = power + 1;
-        const coefficient = 1 / newPower;
         
         steps.push(`For ${variable}^${power}, increase power by 1: ${variable}^${power} → ${variable}^${newPower}`);
         steps.push(`Divide by the new power: (1/${newPower}) * ${variable}^${newPower}`);
