@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InputField from '../../components/ui/InputField';
 import Button from '../../components/ui/Button';
 import ResultDisplay from '../../components/ui/ResultDisplay';
@@ -40,18 +40,21 @@ const Arithmetic = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">Arithmetic Calculator</h1>
-      
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+        Arithmetic Calculator
+      </h1>
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
         <div className="grid gap-6">
           <InputField
+            id="first-number"
             label="First Number"
             type="number"
             value={num1}
             onChange={(e) => setNum1(e.target.value)}
             placeholder="Enter first number"
           />
-          
+
           <div className="flex items-center gap-4">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Operation
@@ -69,6 +72,7 @@ const Arithmetic = () => {
           </div>
 
           <InputField
+            id="second-number"
             label="Second Number"
             type="number"
             value={num2}
@@ -82,11 +86,11 @@ const Arithmetic = () => {
         </div>
 
         {result !== null && (
-          <ResultDisplay
-            label="Result"
-            value={isNaN(result) ? 'Error' : result.toString()}
-          />
+          <ResultDisplay title="Result">
+            {Number.isNaN(result) ? 'Error' : result.toString()}
+          </ResultDisplay>
         )}
+
       </div>
 
       <div className="prose dark:prose-invert max-w-none">

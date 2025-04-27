@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InputField from '../../components/ui/InputField';
 import Button from '../../components/ui/Button';
 import ResultDisplay from '../../components/ui/ResultDisplay';
@@ -58,6 +58,7 @@ const Statistics = () => {
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <InputField
+          id="numbers" // Added id here
           label="Enter numbers (comma-separated)"
           value={numbers}
           onChange={(e) => setNumbers(e.target.value)}
@@ -72,16 +73,18 @@ const Statistics = () => {
 
         {Object.keys(results).length > 0 && (
           <div className="mt-6 space-y-4">
-            <ResultDisplay label="Mean" value={results.mean?.toString()} />
-            <ResultDisplay label="Median" value={results.median?.toString()} />
-            <ResultDisplay 
-              label="Mode" 
-              value={results.mode?.length ? results.mode.join(', ') : 'No mode'} 
-            />
-            <ResultDisplay 
-              label="Standard Deviation" 
-              value={results.standardDeviation?.toString()} 
-            />
+            <ResultDisplay title="Mean">
+              {results.mean?.toString() ?? 'N/A'}
+            </ResultDisplay>
+            <ResultDisplay title="Median">
+              {results.median?.toString() ?? 'N/A'}
+            </ResultDisplay>
+            <ResultDisplay title="Mode">
+              {results.mode?.length ? results.mode.join(', ') : 'No mode'}
+            </ResultDisplay>
+            <ResultDisplay title="Standard Deviation">
+              {results.standardDeviation?.toString() ?? 'N/A'}
+            </ResultDisplay>
           </div>
         )}
       </div>
