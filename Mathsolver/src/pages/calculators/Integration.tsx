@@ -3,7 +3,6 @@ import { Sigma, HelpCircle } from 'lucide-react';
 import InputField from '../../components/ui/InputField';
 import Button from '../../components/ui/Button';
 import ResultDisplay from '../../components/ui/ResultDisplay';
-import * as math from 'mathjs';
 
 interface IntegrationResult {
   integral: string;
