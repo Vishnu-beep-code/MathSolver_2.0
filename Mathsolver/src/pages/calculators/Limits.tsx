@@ -10,6 +10,19 @@ const Limits: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Utility to safely evaluate the mathematical expression
+  const evaluateExpression = (expr: string, value: number): number => {
+    // Replace all occurrences of ^ with ** (for exponentiation in JS)
+    const modifiedExpression = expr.replace(new RegExp(`\\b${variable}\\b`, 'g'), value.toString()).replace(/\^/g, '**');
+    
+    try {
+      // Evaluate the expression by using the Function constructor (safer than eval)
+      return new Function('return ' + modifiedExpression)();
+    } catch (e) {
+      throw new Error('Invalid expression');
+    }
+  };
+
   const calculateLimit = () => {
     if (!expression || !variable || !approachingValue) {
       setError('Please fill in all fields.');
@@ -17,9 +30,23 @@ const Limits: React.FC = () => {
       return;
     }
 
-    // Placeholder for actual limit calculation logic
-    setResult(`Limit of ${expression} as ${variable} approaches ${approachingValue} is calculated here.`);
-    setError(null); // Reset error if calculation succeeds
+    const value = parseFloat(approachingValue);
+
+    if (isNaN(value)) {
+      setError('Approaching value must be a valid number.');
+      setResult(null);
+      return;
+    }
+
+    try {
+      // Evaluate the limit as variable approaches the specified value
+      const evaluatedResult = evaluateExpression(expression, value);
+      setResult(`Limit of ${expression} as ${variable} approaches ${value} is ${evaluatedResult}`);
+      setError(null); // Reset error if calculation succeeds
+    } catch (e) {
+      setError('There was an error with the calculation. Please check the expression and try again.');
+      setResult(null);
+    }
   };
 
   return (
