@@ -1,8 +1,3 @@
-Got it — you want the **README** totally **Windows-focused** (no Arch Linux / Linux commands).  
-Here’s the corrected **Windows-only README** for your MathSolver project:
-
----
-
 # 📚 MathSolver
 
 **MathSolver** is a simple and powerful web application that allows students to solve mathematical problems like **Differentiation**, **Integration**, **Probability**, **Statistics**, and more — completely free, with no login required.
