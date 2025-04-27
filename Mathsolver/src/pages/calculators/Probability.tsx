@@ -7,6 +7,7 @@ const Probability: React.FC = () => {
   const [favorableOutcomes, setFavorableOutcomes] = useState<string>('');
   const [totalOutcomes, setTotalOutcomes] = useState<string>('');
   const [result, setResult] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
   const calculateProbability = () => {
     const favorable = parseFloat(favorableOutcomes);
@@ -14,16 +15,19 @@ const Probability: React.FC = () => {
 
     if (isNaN(favorable) || isNaN(total) || total === 0) {
       setResult('Please enter valid numbers. Total outcomes must not be zero.');
+      setError('Total outcomes must not be zero.');
       return;
     }
 
     if (favorable > total) {
       setResult('Favorable outcomes cannot be greater than total outcomes.');
+      setError('Favorable outcomes cannot exceed total outcomes.');
       return;
     }
 
     const probability = (favorable / total) * 100;
     setResult(`Probability: ${probability.toFixed(2)}%`);
+    setError(null); // clear error if calculation is successful
   };
 
   return (
@@ -35,14 +39,17 @@ const Probability: React.FC = () => {
         
         <div className="space-y-4">
           <InputField
+            id="favorableOutcomes"
             label="Favorable Outcomes"
             type="number"
             value={favorableOutcomes}
             onChange={(e) => setFavorableOutcomes(e.target.value)}
             placeholder="Enter number of favorable outcomes"
+            
           />
           
           <InputField
+            id="totalOutcomes"
             label="Total Outcomes"
             type="number"
             value={totalOutcomes}
@@ -58,7 +65,7 @@ const Probability: React.FC = () => {
           </Button>
 
           {result && (
-            <ResultDisplay result={result} />
+            <ResultDisplay title="Probability Result">{result}</ResultDisplay>
           )}
         </div>
 

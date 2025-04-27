@@ -8,12 +8,18 @@ const Limits: React.FC = () => {
   const [variable, setVariable] = useState('');
   const [approachingValue, setApproachingValue] = useState('');
   const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const calculateLimit = () => {
-    // This is a placeholder for actual limit calculation logic
-    // In a production environment, you would want to use a math library
-    // to properly calculate limits
-    setResult('Limit calculation will be implemented here');
+    if (!expression || !variable || !approachingValue) {
+      setError('Please fill in all fields.');
+      setResult(null);
+      return;
+    }
+
+    // Placeholder for actual limit calculation logic
+    setResult(`Limit of ${expression} as ${variable} approaches ${approachingValue} is calculated here.`);
+    setError(null); // Reset error if calculation succeeds
   };
 
   return (
@@ -24,24 +30,31 @@ const Limits: React.FC = () => {
       
       <div className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <InputField
+          id="expression"
           label="Expression"
           placeholder="Enter mathematical expression (e.g., x^2 + 2x + 1)"
           value={expression}
           onChange={(e) => setExpression(e.target.value)}
+          error={error ? 'Please provide a valid expression.' : ''}
         />
         
         <InputField
+          id="variable"
           label="Variable"
           placeholder="Enter variable (e.g., x)"
           value={variable}
           onChange={(e) => setVariable(e.target.value)}
+          error={error ? 'Please provide a valid variable.' : ''}
         />
         
         <InputField
+          id="approachingValue"
           label="Approaching Value"
           placeholder="Enter the value the variable approaches"
           value={approachingValue}
           onChange={(e) => setApproachingValue(e.target.value)}
+          type="number"  // Ensure type="number" for numerical inputs
+          error={error ? 'Please provide a valid approaching value.' : ''}
         />
         
         <Button
@@ -52,7 +65,13 @@ const Limits: React.FC = () => {
           Calculate Limit
         </Button>
         
-        {result && <ResultDisplay result={result} />}
+        {result && (
+          <ResultDisplay 
+            title="Limit Calculation Result"
+          >
+            {result}
+          </ResultDisplay>
+        )}
       </div>
 
       <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
