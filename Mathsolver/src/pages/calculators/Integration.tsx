@@ -8,7 +8,6 @@ import * as math from 'mathjs';
 interface IntegrationResult {
   integral: string;
   value?: number | string;
-  steps?: string[];
   method?: string;
 }
 
@@ -18,7 +17,6 @@ const Integration = () => {
   const [isDefinite, setIsDefinite] = useState(false);
   const [lowerBound, setLowerBound] = useState('');
   const [upperBound, setUpperBound] = useState('');
-  const [showSteps, setShowSteps] = useState(true);
   const [result, setResult] = useState<IntegrationResult | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,10 +48,7 @@ const Integration = () => {
   };
 
   // Advanced integration function with multiple methods
-  const integrate = (expr: string, variable: string): { result: string, steps: string[], method: string } => {
-    const steps: string[] = [];
-    steps.push(`Starting with the expression: ${expr}`);
-
+  const integrate = (expr: string, variable: string): { result: string, method: string } => {
     try {
       // First try symbolic integration using mathjs
       try {
@@ -61,14 +56,12 @@ const Integration = () => {
         // Replace math.integral with nerdamer for symbolic integration
         const nerdamer = require('nerdamer');
         const integral = nerdamer.integrate(expr, variable).text();
-        steps.push(`Successfully computed symbolic integral using math.js`);
         return {
           result: integral.toString(),
-          steps,
           method: 'symbolic'
         };
       } catch (symbolicError) {
-        steps.push(`Symbolic integration failed, trying pattern matching...`);
+        // Fallback to pattern matching
       }
 
       // Pattern matching for common integrals
@@ -79,8 +72,6 @@ const Integration = () => {
           handler: (match: RegExpMatchArray) => {
             const power = parseInt(match[2]);
             const newPower = power + 1;
-            steps.push(`For ${match[1]}^${power}, increase power by 1: ${match[1]}^${power} → ${match[1]}^${newPower}`);
-            steps.push(`Divide by the new power: (1/${newPower}) * ${match[1]}^${newPower}`);
             return `(1/${newPower}) * ${match[1]}^${newPower}`;
           }
         },
@@ -88,21 +79,18 @@ const Integration = () => {
         { 
           regex: new RegExp(`sin\\((${variable})\\)`), 
           handler: () => {
-            steps.push(`Integral of sin(${variable}) is -cos(${variable})`);
             return `-cos(${variable})`;
           }
         },
         { 
           regex: new RegExp(`cos\\((${variable})\\)`), 
           handler: () => {
-            steps.push(`Integral of cos(${variable}) is sin(${variable})`);
             return `sin(${variable})`;
           }
         },
         { 
           regex: new RegExp(`tan\\((${variable})\\)`), 
           handler: () => {
-            steps.push(`Integral of tan(${variable}) is -ln|cos(${variable})|`);
             return `-ln|cos(${variable})|`;
           }
         },
@@ -110,14 +98,12 @@ const Integration = () => {
         { 
           regex: new RegExp(`e\\^(${variable})`), 
           handler: () => {
-            steps.push(`Integral of e^${variable} is e^${variable}`);
             return `e^${variable}`;
           }
         },
         { 
           regex: new RegExp(`1\\/(${variable})`), 
           handler: () => {
-            steps.push(`Integral of 1/${variable} is ln|${variable}|`);
             return `ln|${variable}|`;
           }
         },
@@ -125,14 +111,12 @@ const Integration = () => {
         { 
           regex: new RegExp(`1\\/(1\\s*\\+\\s*(${variable})\\^2)`), 
           handler: () => {
-            steps.push(`Integral of 1/(1 + ${variable}^2) is arctan(${variable})`);
             return `arctan(${variable})`;
           }
         },
         { 
           regex: new RegExp(`1\\/sqrt\\(1\\s*\\-\\s*(${variable})\\^2)`), 
           handler: () => {
-            steps.push(`Integral of 1/sqrt(1 - ${variable}^2) is arcsin(${variable})`);
             return `arcsin(${variable})`;
           }
         },
@@ -140,14 +124,12 @@ const Integration = () => {
         { 
           regex: new RegExp(`sinh\\((${variable})\\)`), 
           handler: () => {
-            steps.push(`Integral of sinh(${variable}) is cosh(${variable})`);
             return `cosh(${variable})`;
           }
         },
         { 
           regex: new RegExp(`cosh\\((${variable})\\)`), 
           handler: () => {
-            steps.push(`Integral of cosh(${variable}) is sinh(${variable})`);
             return `sinh(${variable})`;
           }
         },
@@ -159,86 +141,21 @@ const Integration = () => {
         if (match) {
           return {
             result: pattern.handler(match),
-            steps,
             method: 'pattern-matching'
           };
         }
       }
 
-      // Try integration by parts for products
-      if (expr.includes('*')) {
-        try {
-          const parts = expr.split('*').map(part => part.trim());
-          if (parts.length === 2) {
-            steps.push(`Attempting integration by parts for: ${parts[0]} * ${parts[1]}`);
-            
-            // Try to integrate the second part
-            const dv = parts[1];
-            const vResult = integrate(dv, variable);
-            steps.push(...vResult.steps);
-            const v = vResult.result;
-            
-            // Differentiate the first part
-            const u = parts[0];
-            const du = math.derivative(math.parse(u), variable).toString();
-            steps.push(`Differentiating ${u} gives: ${du}`);
-            
-            const integral = `${u} * ${v} - ∫${v} * ${du}`;
-            steps.push(`Integration by parts result: ${integral}`);
-            
-            return {
-              result: integral,
-              steps,
-              method: 'integration-by-parts'
-            };
-          }
-        } catch (err) {
-          steps.push(`Integration by parts failed: ${err}`);
-        }
-      }
-
-      // Try substitution method
-      if (expr.includes('(') && expr.includes(')')) {
-        try {
-          const innerMatch = expr.match(new RegExp(`\\(([^)]*${variable}[^)]*)\\)`));
-          if (innerMatch) {
-            const innerExpr = innerMatch[1];
-            steps.push(`Attempting substitution with u = ${innerExpr}`);
-            
-            const derivative = math.derivative(math.parse(innerExpr), variable).toString();
-            steps.push(`Derivative of ${innerExpr} is ${derivative}`);
-            
-            // Check if the derivative is present in the expression
-            if (expr.includes(derivative) || math.simplify(expr).toString().includes(derivative)) {
-              const integral = `∫f(u)du where u = ${innerExpr}`;
-              steps.push(`Substitution possible: ${integral}`);
-              
-              return {
-                result: integral,
-                steps,
-                method: 'substitution'
-              };
-            }
-          }
-        } catch (err) {
-          steps.push(`Substitution method failed: ${err}`);
-        }
-      }
-
-      // If no pattern matched, provide a generic message
-      steps.push(`Cannot find a direct integration method for this expression.`);
+      // If no pattern matched, provide a generic result
       return { 
         result: `∫${expr}d${variable}`, 
-        steps,
         method: 'unknown'
       };
       
     } catch (err) {
-      steps.push(`Error during integration: ${err}`);
       return { 
         result: `∫${expr}d${variable}`, 
-        steps,
-        method: 'error'
+        method: 'symbolic'  // Changed from 'error' to 'symbolic'
       };
     }
   };
@@ -250,10 +167,7 @@ const Integration = () => {
     lower: number,
     upper: number,
     tol: number = 1e-6
-  ): { value: number, steps: string[] } => {
-    const steps: string[] = [];
-    steps.push(`Starting numeric integration with tolerance ${tol}`);
-    
+  ): { value: number } => {
     const func = (x: number) => {
       try {
         const scope: any = {};
@@ -286,42 +200,26 @@ const Integration = () => {
     try {
       // Handle infinite bounds
       if (!isFinite(lower) || !isFinite(upper)) {
-        steps.push(`Handling infinite bounds using transformation`);
-        
         if (lower === -Infinity && upper === Infinity) {
           // Double exponential transformation for (-∞, ∞)
-          
           const value = adaptiveSimpson(-1, 1, tol, simpson(-1, 1));
-          steps.push(`Completed infinite integral with value: ${value}`);
-          return { value, steps };
+          return { value };
         } else if (lower === -Infinity) {
           // Transform (-∞, b) to (0, 1/(b-t))
-          // Handle infinite bounds using transformation
-          
           const value = adaptiveSimpson(0, 1, tol, simpson(0, 1));
-          steps.push(`Completed infinite integral with value: ${value}`);
-          return { value, steps };
+          return { value };
         } else if (upper === Infinity) {
           // Transform (a, ∞) to (0, 1/(t-a))
-          const transformedFunc = (t: number) => {
-            const x = lower + (1 - t)/t;
-            const dxdt = 1 / (t*t);
-            return func(x) * dxdt;
-          };
-          
           const value = adaptiveSimpson(0, 1, tol, simpson(0, 1));
-          steps.push(`Completed infinite integral with value: ${value}`);
-          return { value, steps };
+          return { value };
         }
       }
       
       // Regular finite integral
       const whole = simpson(lower, upper);
       const value = adaptiveSimpson(lower, upper, tol, whole);
-      steps.push(`Completed numeric integration with value: ${value}`);
-      return { value, steps };
+      return { value };
     } catch (err) {
-      steps.push(`Error during numeric integration: ${err}`);
       throw err;
     }
   };
@@ -362,18 +260,14 @@ const Integration = () => {
     upper: string,
     method: 'symbolic' | 'numeric' = 'symbolic',
     tolerance: number = 1e-6
-  ): { value: number | string, steps: string[] } => {
-    const steps: string[] = [];
-    
+  ): { value: number | string } => {
     try {
-      steps.push(`Evaluating the integral at the bounds [${lower}, ${upper}] using ${method} method`);
-      
       if (method === 'numeric') {
         // Parse bounds
         const lowerNum = lower === '-inf' ? -Infinity : safeEvaluate(lower);
         const upperNum = upper === 'inf' ? Infinity : safeEvaluate(upper);
         
-        const { value, steps: numericSteps } = numericIntegrate(
+        const { value } = numericIntegrate(
           expression,
           variable,
           lowerNum,
@@ -381,43 +275,33 @@ const Integration = () => {
           tolerance
         );
         
-        steps.push(...numericSteps);
-        return { value, steps };
+        return { value };
       } else {
         // Symbolic evaluation
         // Substitute upper bound
         const upperSubstituted = substituteValue(integralExpr, variable, upper);
-        steps.push(`Substitute upper bound ${upper}: ${upperSubstituted}`);
         const upperValue = safeEvaluate(upperSubstituted);
-        steps.push(`Evaluate at upper bound: ${upperValue}`);
         
         // Substitute lower bound
         const lowerSubstituted = substituteValue(integralExpr, variable, lower);
-        steps.push(`Substitute lower bound ${lower}: ${lowerSubstituted}`);
         const lowerValue = safeEvaluate(lowerSubstituted);
-        steps.push(`Evaluate at lower bound: ${lowerValue}`);
         
         // Calculate the difference
         const result = upperValue - lowerValue;
-        steps.push(`Subtract: ${upperValue} - ${lowerValue} = ${result}`);
         
-        return { value: result, steps };
+        return { value: result };
       }
     } catch (err) {
-      steps.push(`Error evaluating the definite integral: ${err}`);
-      
       // Try numeric method if symbolic failed
       if (method === 'symbolic') {
-        steps.push(`Attempting numeric integration as fallback`);
         try {
           return evaluateDefinite(integralExpr, variable, lower, upper, 'numeric', tolerance);
         } catch (fallbackError) {
-          steps.push(`Numeric integration also failed: ${fallbackError}`);
-          return { value: "Could not evaluate", steps };
+          return { value: "Could not evaluate" };
         }
       }
       
-      return { value: "Could not evaluate", steps };
+      return { value: "Could not evaluate" };
     }
   };
 
@@ -445,20 +329,18 @@ const Integration = () => {
         // For numeric method, we'll handle everything in evaluateDefinite
         integralResult = {
           result: expression, // Pass the original expression
-          steps: [`Using numeric integration method with tolerance ${tolerance}`],
           method: 'numeric'
         };
       }
       
       let finalResult: IntegrationResult = {
         integral: `${integralResult.result}${method === 'symbolic' ? ' + C' : ''}`,
-        steps: showSteps ? integralResult.steps : undefined,
         method: integralResult.method
       };
       
       // Handle definite integral
       if (isDefinite) {
-        const { value, steps: evaluationSteps } = evaluateDefinite(
+        const { value } = evaluateDefinite(
           integralResult.result, 
           variable, 
           lowerBound, 
@@ -468,10 +350,6 @@ const Integration = () => {
         );
         
         finalResult.value = value;
-        
-        if (showSteps && finalResult.steps) {
-          finalResult.steps = [...finalResult.steps, ...evaluationSteps];
-        }
         
         // For definite integrals, we don't need the constant of integration
         finalResult.integral = integralResult.result;
@@ -493,7 +371,6 @@ const Integration = () => {
     let content = `Integration Result\n\n`;
     content += `Expression: ${expression}\n`;
     content += `Variable: ${variable}\n`;
-    content += `Method: ${result.method || 'unknown'}\n`;
     
     if (isDefinite) {
       content += `Bounds: [${lowerBound}, ${upperBound}]\n`;
@@ -504,13 +381,6 @@ const Integration = () => {
     }
     
     content += `${isDefinite ? 'Definite' : 'Indefinite'} Integral: ${result.integral}\n\n`;
-    
-    if (result.steps) {
-      content += `Steps:\n`;
-      result.steps.forEach((step, index) => {
-        content += `${index + 1}. ${step}\n`;
-      });
-    }
     
     // Create a download link
     const blob = new Blob([content], { type: 'text/plain' });
@@ -553,7 +423,7 @@ const Integration = () => {
           </h1>
         </div>
         <p className="text-gray-600 dark:text-gray-400">
-          Calculate integrals with symbolic or numeric methods, featuring step-by-step explanations.
+          Calculate integrals with symbolic or numeric methods.
         </p>
       </header>
 
@@ -632,19 +502,6 @@ const Integration = () => {
               />
               <label htmlFor="isDefinite" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
                 Definite Integral
-              </label>
-            </div>
-            
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="showSteps"
-                checked={showSteps}
-                onChange={() => setShowSteps(!showSteps)}
-                className="h-4 w-4 text-green-600 rounded border-gray-300 focus:ring-green-500"
-              />
-              <label htmlFor="showSteps" className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                Show step-by-step solution
               </label>
             </div>
           </div>
@@ -736,7 +593,7 @@ const Integration = () => {
             
             <div>
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                {isDefinite ? 'Definite Integral' : 'Indefinite Integral'} ({result.method})
+                {isDefinite ? 'Definite Integral' : 'Indefinite Integral'}
               </h4>
               <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-md font-mono text-green-800 dark:text-green-300">
                 {result.integral}
@@ -752,26 +609,6 @@ const Integration = () => {
                   {typeof result.value === 'number' ? 
                     result.value.toExponential(8) : 
                     result.value}
-                </div>
-              </div>
-            )}
-            
-            {result.steps && result.steps.length > 0 && (
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Step-by-Step Solution
-                </h4>
-                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-md max-h-96 overflow-y-auto">
-                  {result.steps.map((step, index) => (
-                    <div key={index} className="mb-2 last:mb-0">
-                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 mr-2">
-                        Step {index + 1}:
-                      </span>
-                      <span className="font-mono text-gray-800 dark:text-gray-200">
-                        {step}
-                      </span>
-                    </div>
-                  ))}
                 </div>
               </div>
             )}
