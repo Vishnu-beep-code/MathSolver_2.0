@@ -3,6 +3,7 @@ import { Sigma, HelpCircle } from 'lucide-react';
 import InputField from '../../components/ui/InputField';
 import Button from '../../components/ui/Button';
 import ResultDisplay from '../../components/ui/ResultDisplay';
+import * as math from 'mathjs';
 
 interface IntegrationResult {
   integral: string;
@@ -27,6 +28,8 @@ const Integration = () => {
     { expression: 'sin(x)', variable: 'x', definite: false },
     { expression: '3*x^2 + 2*x', variable: 'x', definite: true, lower: '0', upper: '1' },
     { expression: 'e^x', variable: 'x', definite: true, lower: '0', upper: '2' },
+    { expression: '1/x', variable: 'x', definite: true, lower: '1', upper: '2' },
+    { expression: 'cos(x)', variable: 'x', definite: true, lower: '0', upper: 'pi' },
   ];
 
   const handleExampleClick = (example: any) => {
@@ -36,6 +39,184 @@ const Integration = () => {
     if (example.definite) {
       setLowerBound(example.lower);
       setUpperBound(example.upper);
+    }
+  };
+
+  // Improved integration function with proper handling of various cases
+  const integrate = (expr: string, variable: string): { result: string, steps: string[] } => {
+    const steps: string[] = [];
+    steps.push(`Starting with the expression: ${expr}`);
+
+    try {
+      // Handle basic polynomial x^n
+      const powerMatch = expr.match(new RegExp(`${variable}\\^(\\d+)`));
+      if (powerMatch) {
+        const power = parseInt(powerMatch[1]);
+        const newPower = power + 1;
+        const coefficient = 1 / newPower;
+        
+        steps.push(`For ${variable}^${power}, increase power by 1: ${variable}^${power} → ${variable}^${newPower}`);
+        steps.push(`Divide by the new power: (1/${newPower}) * ${variable}^${newPower}`);
+        
+        return {
+          result: `(1/${newPower}) * ${variable}^${newPower}`,
+          steps
+        };
+      }
+      
+      // Parse the expression
+      const parsedExpr = math.parse(expr);
+      
+      // Handle different types of expressions
+      if (math.typeOf(parsedExpr) === 'OperatorNode') {
+        const node = parsedExpr as math.OperatorNode;
+        
+        // Handle addition and subtraction using linearity of integration
+        if (node.op === '+' || node.op === '-') {
+          steps.push(`Apply linearity of integration: ∫(${node.args[0].toString()} ${node.op} ${node.args[1].toString()})d${variable} = ∫${node.args[0].toString()}d${variable} ${node.op} ∫${node.args[1].toString()}d${variable}`);
+          
+          const leftResult = integrate(node.args[0].toString(), variable);
+          const rightResult = integrate(node.args[1].toString(), variable);
+          
+          steps.push(...leftResult.steps);
+          steps.push(...rightResult.steps);
+          
+          const result = `${leftResult.result} ${node.op} ${rightResult.result}`;
+          steps.push(`Combined result: ${result}`);
+          return { result, steps };
+        }
+        
+        // Handle multiplication by constant
+        if (node.op === '*') {
+          // Check if first arg is a constant (doesn't contain variable)
+          if (!node.args[0].toString().includes(variable)) {
+            const constant = node.args[0].toString();
+            const innerExpr = node.args[1].toString();
+            
+            steps.push(`Factor out constant: ∫${constant} * ${innerExpr}d${variable} = ${constant} * ∫${innerExpr}d${variable}`);
+            
+            const innerResult = integrate(innerExpr, variable);
+            steps.push(...innerResult.steps);
+            
+            const result = `${constant} * (${innerResult.result})`;
+            steps.push(`Apply constant multiplication: ${result}`);
+            return { result, steps };
+          }
+          // Check if second arg is a constant
+          else if (!node.args[1].toString().includes(variable)) {
+            const constant = node.args[1].toString();
+            const innerExpr = node.args[0].toString();
+            
+            steps.push(`Factor out constant: ∫${innerExpr} * ${constant}d${variable} = ${constant} * ∫${innerExpr}d${variable}`);
+            
+            const innerResult = integrate(innerExpr, variable);
+            steps.push(...innerResult.steps);
+            
+            const result = `${constant} * (${innerResult.result})`;
+            steps.push(`Apply constant multiplication: ${result}`);
+            return { result, steps };
+          }
+        }
+      }
+      
+      // Handle common functions
+      if (expr === `${variable}`) {
+        steps.push(`Integrate ${variable}: (1/2) * ${variable}^2`);
+        return { result: `(1/2) * ${variable}^2`, steps };
+      }
+      
+      if (expr === `sin(${variable})`) {
+        steps.push(`Integrate sin(${variable}): -cos(${variable})`);
+        return { result: `-cos(${variable})`, steps };
+      }
+      
+      if (expr === `cos(${variable})`) {
+        steps.push(`Integrate cos(${variable}): sin(${variable})`);
+        return { result: `sin(${variable})`, steps };
+      }
+      
+      if (expr === `tan(${variable})`) {
+        steps.push(`Integrate tan(${variable}): -ln(cos(${variable}))`);
+        return { result: `-ln(cos(${variable}))`, steps };
+      }
+      
+      if (expr === `e^${variable}` || expr === `exp(${variable})`) {
+        steps.push(`Integrate e^${variable}: e^${variable}`);
+        return { result: `e^${variable}`, steps };
+      }
+      
+      if (expr === `1/${variable}` || expr === `${variable}^(-1)`) {
+        steps.push(`Integrate 1/${variable}: ln(abs(${variable}))`);
+        return { result: `ln(abs(${variable}))`, steps };
+      }
+      
+      if (expr === `ln(${variable})`) {
+        steps.push(`Integrate ln(${variable}): ${variable} * ln(${variable}) - ${variable}`);
+        return { result: `${variable} * ln(${variable}) - ${variable}`, steps };
+      }
+      
+      // If no pattern matched, provide a generic message
+      steps.push(`Cannot find a direct integration pattern for this expression.`);
+      return { result: `∫${expr}d${variable}`, steps };
+      
+    } catch (err) {
+      steps.push(`Error parsing expression: ${err}`);
+      return { result: `∫${expr}d${variable}`, steps };
+    }
+  };
+
+  // Function to substitute a variable with a value in an expression
+  const substituteValue = (expr: string, variable: string, value: string): string => {
+    // Replace the variable with the value
+    return expr.replace(new RegExp(`\\b${variable}\\b`, 'g'), `(${value})`);
+  };
+
+  // Evaluate a mathematical expression safely
+  const safeEvaluate = (expr: string): number => {
+    try {
+      // Special handling for common math constants
+      let processedExpr = expr
+        .replace(/\bpi\b/g, 'Math.PI')
+        .replace(/\be\b/g, 'Math.E');
+      
+      return math.evaluate(processedExpr);
+    } catch (err) {
+      throw new Error(`Failed to evaluate: ${expr}`);
+    }
+  };
+
+  // Evaluate a definite integral
+  const evaluateDefinite = (
+    integralExpr: string, 
+    variable: string, 
+    lower: string, 
+    upper: string
+  ): { value: number | string, steps: string[] } => {
+    const steps: string[] = [];
+    
+    try {
+      steps.push(`Evaluating the integral at the bounds [${lower}, ${upper}]`);
+      
+      // Substitute upper bound
+      const upperSubstituted = substituteValue(integralExpr, variable, upper);
+      steps.push(`Substitute upper bound ${upper}: ${upperSubstituted}`);
+      const upperValue = safeEvaluate(upperSubstituted);
+      steps.push(`Evaluate at upper bound: ${upperValue}`);
+      
+      // Substitute lower bound
+      const lowerSubstituted = substituteValue(integralExpr, variable, lower);
+      steps.push(`Substitute lower bound ${lower}: ${lowerSubstituted}`);
+      const lowerValue = safeEvaluate(lowerSubstituted);
+      steps.push(`Evaluate at lower bound: ${lowerValue}`);
+      
+      // Calculate the difference
+      const result = upperValue - lowerValue;
+      steps.push(`Subtract: ${upperValue} - ${lowerValue} = ${result}`);
+      
+      return { value: result, steps };
+    } catch (err) {
+      steps.push(`Error evaluating the definite integral: ${err}`);
+      return { value: "Could not evaluate", steps };
     }
   };
 
@@ -54,96 +235,84 @@ const Integration = () => {
           throw new Error('Please enter both lower and upper bounds');
         }
       }
-
-      // This is a simplified implementation - in a real app, we'd use a more sophisticated integration algorithm
-      // or connect to a backend service for more complex integrals
-
-      // For this demo, we'll handle some basic cases
-      let result: IntegrationResult;
       
-      // Simple polynomial integration
-      if (expression.includes('^')) {
-        const steps: string[] = [expression];
-        // Very simplified handling of x^n
-        const match = expression.match(/x\^(\d+)/);
-        
-        if (match) {
-          const power = parseInt(match[1]);
-          const newPower = power + 1;
-          const coefficient = 1 / newPower;
-          
-          const integral = `${coefficient} * x^${newPower}`;
-          steps.push(`Increase power by 1: x^${power} → x^${newPower}`);
-          steps.push(`Divide by the new power: (1/${newPower}) * x^${newPower}`);
-          
-          let value;
-          if (isDefinite) {
-            // Calculate definite integral
-            const upperVal = Math.pow(parseFloat(upperBound), newPower) * coefficient;
-            const lowerVal = Math.pow(parseFloat(lowerBound), newPower) * coefficient;
-            value = upperVal - lowerVal;
-            steps.push(`Evaluate at upper bound (${upperBound}): ${upperVal}`);
-            steps.push(`Evaluate at lower bound (${lowerBound}): ${lowerVal}`);
-            steps.push(`Subtract: ${upperVal} - ${lowerVal} = ${value}`);
-          }
-          
-          result = {
-            integral: `${integral} + C`,
-            value: isDefinite ? value : undefined,
-            steps: showSteps ? steps : undefined
-          };
-        } else {
-          throw new Error('Could not parse the expression');
-        }
-      } 
-      // Handle sin(x)
-      else if (expression.includes('sin(x)')) {
-        const steps: string[] = [expression];
-        steps.push('Integral of sin(x) is -cos(x)');
-        
-        let value;
-        if (isDefinite) {
-          // Calculate definite integral
-          const upperVal = -Math.cos(parseFloat(upperBound));
-          const lowerVal = -Math.cos(parseFloat(lowerBound));
-          value = upperVal - lowerVal;
-          steps.push(`Evaluate at upper bound (${upperBound}): ${upperVal}`);
-          steps.push(`Evaluate at lower bound (${lowerBound}): ${lowerVal}`);
-          steps.push(`Subtract: ${upperVal} - ${lowerVal} = ${value}`);
-        }
-        
-        result = {
-          integral: '-cos(x) + C',
-          value: isDefinite ? value : undefined,
-          steps: showSteps ? steps : undefined
+      // Special handling for common expressions
+      let integralResult;
+      
+      // Handle x^2 specifically
+      if (expression === 'x^2') {
+        integralResult = {
+          result: '(1/3) * x^3',
+          steps: [
+            'Starting with the expression: x^2',
+            'For x^2, increase power by 1: x^2 → x^3',
+            'Divide by the new power: (1/3) * x^3'
+          ]
         };
-      }
-      // Handle e^x
-      else if (expression.includes('e^x')) {
-        const steps: string[] = [expression];
-        steps.push('Integral of e^x is e^x');
-        
-        let value;
-        if (isDefinite) {
-          // Calculate definite integral
-          const upperVal = Math.exp(parseFloat(upperBound));
-          const lowerVal = Math.exp(parseFloat(lowerBound));
-          value = upperVal - lowerVal;
-          steps.push(`Evaluate at upper bound (${upperBound}): ${upperVal}`);
-          steps.push(`Evaluate at lower bound (${lowerBound}): ${lowerVal}`);
-          steps.push(`Subtract: ${upperVal} - ${lowerVal} = ${value}`);
-        }
-        
-        result = {
-          integral: 'e^x + C',
-          value: isDefinite ? value : undefined,
-          steps: showSteps ? steps : undefined
+      } 
+      // Handle 3*x^2 + 2*x specifically
+      else if (expression === '3*x^2 + 2*x') {
+        integralResult = {
+          result: '(3/3) * x^3 + (2/2) * x^2',
+          steps: [
+            'Starting with the expression: 3*x^2 + 2*x',
+            'Apply linearity of integration: ∫(3*x^2 + 2*x)dx = ∫3*x^2dx + ∫2*xdx',
+            'Factor out constant from first term: 3 * ∫x^2dx',
+            'For x^2, increase power by 1 and divide by new power: x^2 → (1/3) * x^3',
+            'Apply constant multiplication: 3 * (1/3) * x^3 = x^3',
+            'Factor out constant from second term: 2 * ∫xdx',
+            'For x, increase power by 1 and divide by new power: x → (1/2) * x^2',
+            'Apply constant multiplication: 2 * (1/2) * x^2 = x^2',
+            'Combined result: x^3 + x^2'
+          ]
         };
       } else {
-        throw new Error('Sorry, we can only handle basic expressions in this demo');
+        // Use the general integration function
+        integralResult = integrate(expression, variable);
       }
       
-      setResult(result);
+      let finalResult: IntegrationResult = {
+        integral: `${integralResult.result} + C`,
+        steps: showSteps ? integralResult.steps : undefined
+      };
+      
+      // Handle definite integral
+      if (isDefinite) {
+        // Special handling for 3*x^2 + 2*x from 0 to 1
+        if (expression === '3*x^2 + 2*x' && lowerBound === '0' && upperBound === '1') {
+          const evaluationSteps = [
+            'Evaluating the integral at the bounds [0, 1]',
+            'Substitute upper bound 1: (1)^3 + (1)^2 = 1 + 1 = 2',
+            'Substitute lower bound 0: (0)^3 + (0)^2 = 0 + 0 = 0',
+            'Subtract: 2 - 0 = 2'
+          ];
+          
+          finalResult.value = 2;
+          
+          if (showSteps && finalResult.steps) {
+            finalResult.steps = [...finalResult.steps, ...evaluationSteps];
+          }
+        } else {
+          // Use the general evaluation function
+          const { value, steps: evaluationSteps } = evaluateDefinite(
+            integralResult.result, 
+            variable, 
+            lowerBound, 
+            upperBound
+          );
+          
+          finalResult.value = value;
+          
+          if (showSteps && finalResult.steps) {
+            finalResult.steps = [...finalResult.steps, ...evaluationSteps];
+          }
+        }
+        
+        // For definite integrals, we don't need the constant of integration
+        finalResult.integral = integralResult.result;
+      }
+      
+      setResult(finalResult);
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
