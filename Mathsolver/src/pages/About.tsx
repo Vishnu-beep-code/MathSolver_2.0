@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Calculator, BookOpen, Brain, Zap, RefreshCw, UserCheck, Github, Linkedin } from 'lucide-react';
+import  { useState } from 'react';
+import { Calculator, BookOpen, Zap, RefreshCw, UserCheck, Github, Linkedin } from 'lucide-react';
 
 const About = () => {
   // Track which card is flipped

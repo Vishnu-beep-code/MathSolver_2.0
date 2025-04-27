@@ -22,7 +22,7 @@ const Footer = () => {
               <Link to="/about" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                 About
               </Link>
-              <a href="#" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSezTr8PciI7JoPXJG8ekADe8uEpDNyqI-s-SS1OD8m8jQz5_g/viewform?usp=sharing" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
                 Feedback
               </a>
               <a href="#" className="text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400">
@@ -31,7 +31,7 @@ const Footer = () => {
             </div>
             
             <a 
-              href="https://github.com" 
+              href="https://github.com/PHC-25" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
