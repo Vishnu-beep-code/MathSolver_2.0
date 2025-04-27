@@ -8,14 +8,13 @@ const Algebra: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
 
   const handleSolve = () => {
-    // Basic validation
     if (!equation.trim()) {
       setResult('Please enter an equation');
       return;
     }
 
-    // Placeholder for actual algebra solving logic
-    setResult('Algebra solver coming soon');
+    // Placeholder for solving logic
+    setResult('Algebra solver coming soon!');
   };
 
   return (
@@ -26,12 +25,14 @@ const Algebra: React.FC = () => {
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
         <div className="space-y-6">
-          <InputField
-            label="Enter Equation"
-            placeholder="e.g., 2x + 3 = 7"
-            value={equation}
-            onChange={(e) => setEquation(e.target.value)}
-          />
+        <InputField
+          id="equation"
+          label="Enter Equation"
+          placeholder="e.g., 2x + 3 = 7"
+          value={equation}
+          onChange={(e) => setEquation(e.target.value)}
+        />
+
 
           <Button
             onClick={handleSolve}
@@ -40,8 +41,10 @@ const Algebra: React.FC = () => {
             Solve Equation
           </Button>
 
-          {result && (
-            <ResultDisplay result={result} />
+          {result !== null && (
+            <ResultDisplay title="Solution">
+              {result}
+            </ResultDisplay>
           )}
         </div>
       </div>
@@ -50,3 +53,4 @@ const Algebra: React.FC = () => {
 };
 
 export default Algebra;
+ 
