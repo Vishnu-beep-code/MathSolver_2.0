@@ -13,18 +13,26 @@ const Probability: React.FC = () => {
     const favorable = parseFloat(favorableOutcomes);
     const total = parseFloat(totalOutcomes);
 
-    if (isNaN(favorable) || isNaN(total) || total === 0) {
-      setResult('Please enter valid numbers. Total outcomes must not be zero.');
+    // Validation logic for invalid input
+    if (isNaN(favorable) || isNaN(total)) {
+      setResult('');
+      setError('Please enter valid numbers.');
+      return;
+    }
+
+    if (total === 0) {
+      setResult('');
       setError('Total outcomes must not be zero.');
       return;
     }
 
     if (favorable > total) {
-      setResult('Favorable outcomes cannot be greater than total outcomes.');
-      setError('Favorable outcomes cannot exceed total outcomes.');
+      setResult('');
+      setError('Favorable outcomes cannot be greater than total outcomes.');
       return;
     }
 
+    // Calculate probability if inputs are valid
     const probability = (favorable / total) * 100;
     setResult(`Probability: ${probability.toFixed(2)}%`);
     setError(null); // clear error if calculation is successful
@@ -45,7 +53,6 @@ const Probability: React.FC = () => {
             value={favorableOutcomes}
             onChange={(e) => setFavorableOutcomes(e.target.value)}
             placeholder="Enter number of favorable outcomes"
-            
           />
           
           <InputField
@@ -66,6 +73,12 @@ const Probability: React.FC = () => {
 
           {result && (
             <ResultDisplay title="Probability Result">{result}</ResultDisplay>
+          )}
+
+          {error && (
+            <div className="mt-4 p-4 bg-red-50 text-red-700 border border-red-300 rounded-lg">
+              {error}
+            </div>
           )}
         </div>
 
