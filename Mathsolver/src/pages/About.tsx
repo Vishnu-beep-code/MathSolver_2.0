@@ -1,7 +1,44 @@
-import React from 'react';
-import { Calculator, BookOpen, Brain, Zap, RefreshCw, UserCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calculator, BookOpen, Brain, Zap, RefreshCw, UserCheck, Github, Linkedin } from 'lucide-react';
 
 const About = () => {
+  // Track which card is flipped
+  const [flippedCards, setFlippedCards] = useState<number[]>([]);
+
+  // Toggle card flip
+  const toggleCardFlip = (index: number) => {
+    if (flippedCards.includes(index)) {
+      setFlippedCards(flippedCards.filter(i => i !== index));
+    } else {
+      setFlippedCards([...flippedCards, index]);
+    }
+  };
+
+  // Developer team data
+  const developers = [
+    {
+      name: "Joe Daniel A",
+      role: "Frontend Developer",
+      image: "/src/assets/team/jd.jpg",
+      github: "https://github.com/joedanields",
+      linkedin: "www.linkedin.com/in/joe-daniel1911"
+    },
+    {
+      name: "Anand P",
+      role: "Backend Engineer",
+      image: "/src/assets/team/anand.jpg",
+      github: "https://github.com/michaeljohnson",
+      linkedin: "https://linkedin.com/in/michaeljohnson"
+    },
+    {
+      name: "Arunaw Rishe M",
+      role: "UI/UX Designer",
+      image: "/src/assets/team/arunaw.jpg",
+      github: "https://github.com/ARUNAWRISHE",
+      linkedin: "https://www.linkedin.com/in/arunaw-rishe-m-74a698352/"
+    }
+  ];
+
   return (
     <div className="max-w-4xl mx-auto">
       <header className="mb-12 text-center">
@@ -9,9 +46,66 @@ const About = () => {
           About MathSolver
         </h1>
         <p className="text-xl text-gray-600 dark:text-gray-400">
-          A free math problem-solving platform for students
+          A free math problem-solving platform for students by PHC
         </p>
       </header>
+
+      {/* Developer Team Section */}
+      <section className="mb-16">
+        
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+          Problem Hunters Community
+        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+          Meet Our Team
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {developers.map((dev, index) => (
+            <div key={index} className="relative h-96 cursor-pointer" onClick={() => toggleCardFlip(index)}>
+              {/* Front of Card */}
+              <div className={`absolute inset-0 transition-all duration-500 ease-in-out ${flippedCards.includes(index) ? 'opacity-0 scale-0' : 'opacity-100 scale-100'} bg-white dark:bg-gray-800 rounded-xl shadow-md flex flex-col items-center justify-center p-4`}>
+                <div className="w-40 h-40 rounded-full overflow-hidden mb-4">
+                  <img 
+                    src={dev.image} 
+                    alt={dev.name} 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="font-bold text-xl text-gray-900 dark:text-white">{dev.name}</h3>
+                <p className="text-gray-600 dark:text-gray-400">{dev.role}</p>
+                <p className="text-sm text-blue-500 mt-4">Click to see contact info</p>
+              </div>
+              
+              {/* Back of Card */}
+              <div className={`absolute inset-0 transition-all duration-500 ease-in-out ${flippedCards.includes(index) ? 'opacity-100 scale-100' : 'opacity-0 scale-0'} bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md flex flex-col items-center justify-center p-6`}>
+                <h3 className="font-bold text-xl text-white mb-8">{dev.name}</h3>
+                <p className="text-white mb-8">Connect with me:</p>
+                <div className="flex space-x-4">
+                  <a 
+                    href={dev.github} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-white text-gray-900 hover:bg-gray-100 p-3 rounded-full transition-colors duration-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Github size={24} />
+                  </a>
+                  <a 
+                    href={dev.linkedin} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-white text-blue-600 hover:bg-gray-100 p-3 rounded-full transition-colors duration-200"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Linkedin size={24} />
+                  </a>
+                </div>
+                <p className="text-sm text-white mt-6">Click to flip back</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
@@ -119,7 +213,7 @@ const About = () => {
         </p>
         <div className="flex justify-center">
           <a 
-            href="#" 
+            href="https://docs.google.com/forms/d/e/1FAIpQLSezTr8PciI7JoPXJG8ekADe8uEpDNyqI-s-SS1OD8m8jQz5_g/viewform?usp=sharing" 
             className="inline-flex items-center px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
           >
             <Zap size={18} className="mr-2" />
