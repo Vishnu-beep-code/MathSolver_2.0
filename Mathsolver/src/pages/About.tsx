@@ -1,11 +1,12 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { Calculator, BookOpen, Zap, RefreshCw, UserCheck, Github, Linkedin } from 'lucide-react';
+import jdImage from '../assets/team/jd.jpg';
+import anandImage from '../assets/team/anand.jpg';
+import arunawImage from '../assets/team/arunaw.jpg';
 
 const About = () => {
-  // Track which card is flipped
   const [flippedCards, setFlippedCards] = useState<number[]>([]);
 
-  // Toggle card flip
   const toggleCardFlip = (index: number) => {
     if (flippedCards.includes(index)) {
       setFlippedCards(flippedCards.filter(i => i !== index));
@@ -14,26 +15,25 @@ const About = () => {
     }
   };
 
-  // Developer team data
   const developers = [
     {
       name: "Joe Daniel A",
       role: "Frontend Developer",
-      image: "/src/assets/team/jd.jpg",
+      image: jdImage,
       github: "https://github.com/joedanields",
-      linkedin: "www.linkedin.com/in/joe-daniel1911"
+      linkedin: "https://www.linkedin.com/in/joe-daniel1911"
     },
     {
       name: "Anand P",
       role: "Backend Engineer",
-      image: "/src/assets/team/anand.jpg",
+      image: anandImage,
       github: "https://github.com/michaeljohnson",
       linkedin: "https://linkedin.com/in/michaeljohnson"
     },
     {
       name: "Arunaw Rishe M",
       role: "UI/UX Designer",
-      image: "/src/assets/team/arunaw.jpg",
+      image: arunawImage,
       github: "https://github.com/ARUNAWRISHE",
       linkedin: "https://www.linkedin.com/in/arunaw-rishe-m-74a698352/"
     }
@@ -52,13 +52,13 @@ const About = () => {
 
       {/* Developer Team Section */}
       <section className="mb-16">
-        
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
           Problem Hunters Community
         </h2>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
           Meet Our Team
         </h2>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {developers.map((dev, index) => (
             <div key={index} className="relative h-96 cursor-pointer" onClick={() => toggleCardFlip(index)}>
@@ -75,7 +75,7 @@ const About = () => {
                 <p className="text-gray-600 dark:text-gray-400">{dev.role}</p>
                 <p className="text-sm text-blue-500 mt-4">Click to see contact info</p>
               </div>
-              
+
               {/* Back of Card */}
               <div className={`absolute inset-0 transition-all duration-500 ease-in-out ${flippedCards.includes(index) ? 'opacity-100 scale-100' : 'opacity-0 scale-0'} bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md flex flex-col items-center justify-center p-6`}>
                 <h3 className="font-bold text-xl text-white mb-8">{dev.name}</h3>
@@ -107,6 +107,7 @@ const About = () => {
         </div>
       </section>
 
+      {/* Mission Section */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Our Mission
@@ -123,6 +124,7 @@ const About = () => {
         </p>
       </section>
 
+      {/* Core Principles */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Core Principles
@@ -139,7 +141,7 @@ const About = () => {
               Free for everyone, no paywalls, no subscriptions, no limits.
             </p>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
             <div className="flex items-center mb-3">
               <div className="bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 p-2 rounded-lg mr-3">
@@ -151,7 +153,7 @@ const About = () => {
               We emphasize learning by showing steps and explanations, not just answers.
             </p>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
             <div className="flex items-center mb-3">
               <div className="bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400 p-2 rounded-lg mr-3">
@@ -163,7 +165,7 @@ const About = () => {
               No account required, no data collection, and no tracking.
             </p>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm">
             <div className="flex items-center mb-3">
               <div className="bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 p-2 rounded-lg mr-3">
@@ -178,31 +180,23 @@ const About = () => {
         </div>
       </section>
 
+      {/* How to use */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           How to Use MathSolver
         </h2>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
           <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
-            <li>
-              <span className="font-medium">Choose a calculator</span> from our homepage that matches your problem type.
-            </li>
-            <li>
-              <span className="font-medium">Enter your problem</span> using our intuitive input fields.
-            </li>
-            <li>
-              <span className="font-medium">Click "Solve"</span> to get your answer and see step-by-step explanations.
-            </li>
-            <li>
-              <span className="font-medium">Download or share</span> your results if needed.
-            </li>
-            <li>
-              <span className="font-medium">Use the examples</span> provided if you're not sure how to format your input.
-            </li>
+            <li><span className="font-medium">Choose a calculator</span> from our homepage that matches your problem type.</li>
+            <li><span className="font-medium">Enter your problem</span> using our intuitive input fields.</li>
+            <li><span className="font-medium">Click "Solve"</span> to get your answer and see step-by-step explanations.</li>
+            <li><span className="font-medium">Download or share</span> your results if needed.</li>
+            <li><span className="font-medium">Use the examples</span> provided if you're not sure how to format your input.</li>
           </ol>
         </div>
       </section>
 
+      {/* Feedback */}
       <section>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Feedback and Suggestions
