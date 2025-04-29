@@ -41,6 +41,7 @@ const RSAEncryptor: React.FC = () => {
   const [encrypted, setEncrypted] = useState<number | null>(null);
   const [decrypted, setDecrypted] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [keysGenerated, setKeysGenerated] = useState(false);
 
   const isPrime = (num: number) => {
     if (num <= 1) return false;
@@ -75,6 +76,7 @@ const RSAEncryptor: React.FC = () => {
     setEncrypted(null);
     setDecrypted(null);
     setError(null);
+    setKeysGenerated(true);
   };
 
   const encryptMessage = () => {
@@ -91,6 +93,18 @@ const RSAEncryptor: React.FC = () => {
     const { d, n } = privateKey;
     const m = modPow(encrypted, d, n);
     setDecrypted(m);
+  };
+
+  const downloadKey = (keyType: 'public' | 'private') => {
+    const keyData = keyType === 'public' ? publicKey : privateKey;
+    if (!keyData) return;
+
+    const fileContent = JSON.stringify(keyData, null, 2);
+    const blob = new Blob([fileContent], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${keyType}_key.json`;
+    link.click();
   };
 
   return (
@@ -115,46 +129,67 @@ const RSAEncryptor: React.FC = () => {
         placeholder="Enter another prime number"
       />
 
-      <button onClick={generateKeys} className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+      <button
+        onClick={generateKeys}
+        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+      >
         Generate Keys
       </button>
 
-      {publicKey && privateKey && (
+      {keysGenerated && publicKey && privateKey && (
         <div className="mt-4 text-gray-800 dark:text-gray-100">
           <p>🔑 Public Key: (e={publicKey.e}, n={publicKey.n})</p>
           <p>🔒 Private Key: (d={privateKey.d}, n={privateKey.n})</p>
+          <div className="mt-2 flex space-x-4">
+            <button
+              onClick={() => downloadKey('public')}
+              className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+            >
+              Download Public Key
+            </button>
+            <button
+              onClick={() => downloadKey('private')}
+              className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+            >
+              Download Private Key
+            </button>
+          </div>
         </div>
       )}
 
-      <label className="block text-gray-700 dark:text-gray-200 mt-4">Message (number)</label>
-      <input
-        type="number"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        className="w-full p-2 border rounded mb-3"
-        placeholder="Enter a number message"
-      />
+      {keysGenerated && (
+        <>
+          <label className="block text-gray-700 dark:text-gray-200 mt-4">Message (number)</label>
+          <input
+            type="number"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full p-2 border rounded mb-3"
+            placeholder="Enter a number message"
+          />
 
-      <button
-        onClick={encryptMessage}
-        className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 mb-2"
-      >
-        Encrypt
-      </button>
+          <button
+            onClick={encryptMessage}
+            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 mb-2"
+          >
+            Encrypt
+          </button>
 
-      {encrypted !== null && (
-        <p className="text-green-800 bg-green-100 p-3 rounded mb-2">🔐 Encrypted Message: {encrypted}</p>
-      )}
+          {encrypted !== null && (
+            <p className="text-green-800 bg-green-100 p-3 rounded mb-2">🔐 Encrypted Message: {encrypted}</p>
+          )}
 
-      <button
-        onClick={decryptMessage}
-        className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700"
-      >
-        Decrypt
-      </button>
+          <button
+            onClick={decryptMessage}
+            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700"
+          >
+            Decrypt
+          </button>
 
-      {decrypted !== null && (
-        <p className="text-purple-800 bg-purple-100 p-3 rounded mt-2">🔓 Decrypted Message: {decrypted}</p>
+          {decrypted !== null && (
+            <p className="text-purple-800 bg-purple-100 p-3 rounded mt-2">🔓 Decrypted Message: {decrypted}</p>
+          )}
+        </>
       )}
 
       {error && <p className="text-red-700 bg-red-100 p-3 mt-4 rounded">{error}</p>}
