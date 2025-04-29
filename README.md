@@ -1,6 +1,6 @@
-# 📚 MathSolver
+# 📚 MathSolver 2.0
 
-**MathSolver** is a simple and powerful web application that allows students to solve mathematical problems like **Differentiation**, **Integration**, **Probability**, **Statistics**, and more — completely free, with no login required.
+**MathSolver 2.0 ** is a simple and powerful web application that allows students to solve mathematical problems like **Differentiation**, **Integration**, **Probability**, **Statistics**, and more — completely free, with no login required.
 
 Built with **React**, **Vite**, **TailwindCSS**, and **TypeScript** for a fast and modern experience.
 
@@ -39,7 +39,7 @@ You should see version numbers if installed successfully.
 
 2. **Open Command Prompt** and navigate to the project folder:
     ```bash
-    cd path\to\your\Mathsolver
+    cd path\to\your\Mathsolver_2.0
     ```
 
 3. **Install all project dependencies**:
@@ -57,7 +57,7 @@ You should see version numbers if installed successfully.
     http://localhost:5173
     ```
 
-✅ Your MathSolver app should now be running!
+✅ Your MathSolver 2.0 app should now be running!
 
 ---
 
