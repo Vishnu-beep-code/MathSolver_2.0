@@ -97,7 +97,7 @@ const OneWayClassification: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-      <h1 className="text-2xl font-bold text-center mb-6 text-blue-700">📌 One Way Classification</h1>
+      <h1 className="text-2xl font-bold text-center mb-6 text-blue-700">One Way Classification</h1>
 
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div>
@@ -155,7 +155,7 @@ const OneWayClassification: React.FC = () => {
       </div>
 
       <div className="bg-gray-100 p-4 rounded-lg">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">📄 Step-by-Step Results</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">Step-by-Step Results</h2>
         <ul className="list-disc list-inside text-gray-700 space-y-1">
           {stepResults.map((result, index) => (
             <li key={index} className="whitespace-pre-wrap">{result}</li>
