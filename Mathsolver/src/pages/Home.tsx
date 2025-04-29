@@ -1,5 +1,7 @@
 import { FunctionSquare as Function, Sigma, Percent, BarChart, Calculator, Grid3X3, LineChart, Infinity, DivideCircle } from 'lucide-react';
 import CalculatorCard from '../components/ui/CalculatorCard';
+import { Lock, Activity, Dice5 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const calculators = [
@@ -65,6 +67,27 @@ const Home = () => {
       icon: <DivideCircle size={24} />,
       to: '/arithmetic',
       color: 'blue'
+    },
+    {
+      title: 'RSA Encryption Algorithm',
+      description: 'Explore public-key cryptography with interactive RSA encryption and decryption tools.',
+      icon: <Lock size={24} />,
+      to: '/rsa-encryption',
+      color: 'red'
+    },
+    {
+      title: 'Brownian Motion',
+      description: 'Visualize random motion and stochastic processes with simulation.',
+      icon: <Activity size={24} />,
+      to: '/brownian-motion',
+      color: 'teal'
+    },
+    {
+      title: 'Game Theory',
+      description: 'Analyze strategies and outcomes in competitive scenarios.',
+      icon: <Dice5 size={24} />,
+      to: '/game-theory',
+      color: 'orange'
     }
   ];
 
@@ -81,18 +104,18 @@ const Home = () => {
             No login required.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a 
-              href="#calculators" 
+            <Link 
+              to="#calculators" 
               className="bg-white text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Get Started
-            </a>
-            <a 
-              href="/about" 
+            </Link>
+            <Link 
+              to="/about" 
               className="bg-transparent border border-white text-white hover:bg-white/10 px-6 py-3 rounded-lg font-medium transition-colors duration-200"
             >
               Learn More
-            </a>
+            </Link>
           </div>
         </div>
       </section>

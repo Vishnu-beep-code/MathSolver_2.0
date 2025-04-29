@@ -12,6 +12,9 @@ import Matrix from './pages/calculators/Matrix';
 import GraphPlotter from './pages/calculators/GraphPlotter';
 import Limits from './pages/calculators/Limits';
 import Arithmetic from './pages/calculators/Arithmetic';
+import RSAEncryptionAlgorithm from './pages/calculators/RSAEncryptionAlgorithm';
+import GameTheroy from './pages/calculators/GameTheroy';
+import BrownianMotion from './pages/calculators/BrownianMotion';
 import About from './pages/About';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -55,6 +58,9 @@ function App() {
               <Route path="/graph-plotter" element={<GraphPlotter />} />
               <Route path="/limits" element={<Limits />} />
               <Route path="/arithmetic" element={<Arithmetic />} />
+              <Route path="/rsa-encryption" element={<RSAEncryptionAlgorithm />} />
+              <Route path="/brownian-motion" element={<BrownianMotion />} />
+              <Route path="/game-theory" element={<GameTheroy />} />
               <Route path="/about" element={<About />} />
             </Routes>
           </main>
