@@ -19,6 +19,9 @@ import OneWayClassification from './pages/calculators/OneWayClassification';
 import TwoWayClassification from './pages/calculators/TwoWayClassification';
 import TaylorSeriesMethod from './pages/calculators/TaylorSeries';
 import About from './pages/About';
+import Oneway from './pages/calculators/oneway';
+import Twoway from './pages/calculators/twoway';
+import Taylor from './pages/taylor';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -149,9 +152,15 @@ function App() {
               <Route path="/rsa-encryption" element={<RSAEncryptionAlgorithm />} />
               <Route path="/brownian-motion" element={<BrownianMotion />} />
               <Route path="/game-theory" element={<GameTheroy />} />
+<<<<<<< HEAD
               <Route path="/One-Way-Classsification" element={<OneWayClassification />} />
               <Route path="/Two-Way-Classsification" element={<TwoWayClassification />} />
               <Route path="/Taylor-Series" element={<TaylorSeriesMethod />} />
+=======
+              <Route path="/oneway-classification" element={<Oneway />} />
+              <Route path="/twoway-classficiation" element={<Twoway />} />
+              <Route path="/taylor-series" element={<Taylor />} />
+>>>>>>> 216b3e077e16d42482e00edfa62a98e265789dd3
               <Route path="/about" element={<About />} />
             </Routes>
           </main>
