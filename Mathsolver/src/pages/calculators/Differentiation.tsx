@@ -5,7 +5,6 @@ import Button from '../../components/ui/Button';
 import ResultDisplay from '../../components/ui/ResultDisplay';
 import * as math from 'mathjs';
 
-// Type for the differentiation result
 interface DifferentiationResult {
   derivative: string;
   steps?: string[];
@@ -20,7 +19,6 @@ const Differentiation = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Example expressions
   const examples = [
     { expression: 'x^2', variable: 'x', order: '1' },
     { expression: 'sin(x)', variable: 'x', order: '1' },
@@ -39,29 +37,24 @@ const Differentiation = () => {
     setLoading(true);
     
     try {
-      // Validate inputs
       if (!expression.trim()) {
         throw new Error('Please enter a mathematical expression');
       }
-      
+
       const orderNum = parseInt(order);
       if (isNaN(orderNum) || orderNum < 1) {
         throw new Error('Order must be a positive integer');
       }
 
-      // Parse the expression
       const parsedExpr = math.parse(expression);
-      
-      // Calculate the derivative
       let result = parsedExpr;
       const steps: string[] = [expression];
-      
+
       for (let i = 0; i < orderNum; i++) {
         result = math.derivative(result, variable);
         steps.push(result.toString());
       }
-      
-      // Format the result
+
       setResult({
         derivative: result.toString(),
         steps: showSteps ? steps : undefined
@@ -76,23 +69,21 @@ const Differentiation = () => {
   };
 
   const handleDownload = () => {
-    // Create a text representation of the result
     if (!result) return;
-    
+
     let content = `Differentiation Result\n\n`;
     content += `Expression: ${expression}\n`;
     content += `Variable: ${variable}\n`;
     content += `Order: ${order}\n\n`;
     content += `Derivative: ${result.derivative}\n\n`;
-    
+
     if (result.steps) {
       content += `Steps:\n`;
       result.steps.forEach((step, index) => {
         content += `${index}. ${step}\n`;
       });
     }
-    
-    // Create a download link
+
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -129,7 +120,7 @@ const Differentiation = () => {
             helpText="Use * for multiplication, ^ for exponents, and functions like sin(), cos(), etc."
             error={error}
           />
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
               id="variable"
@@ -139,7 +130,7 @@ const Differentiation = () => {
               placeholder="e.g., x"
               helpText="The variable to differentiate with respect to"
             />
-            
+
             <InputField
               id="order"
               label="Order of Derivative"
@@ -150,7 +141,7 @@ const Differentiation = () => {
               helpText="Order of the derivative (1 for first derivative, 2 for second, etc.)"
             />
           </div>
-          
+
           <div className="mt-4 flex items-center">
             <input
               type="checkbox"
@@ -164,18 +155,13 @@ const Differentiation = () => {
             </label>
           </div>
         </div>
-        
+
         <div className="flex flex-wrap gap-3 mb-6">
-          <Button 
-            onClick={handleSolve} 
-            disabled={loading}
-            variant="primary"
-            size="lg"
-          >
+          <Button onClick={handleSolve} disabled={loading} variant="primary" size="lg">
             {loading ? 'Calculating...' : 'Calculate Derivative'}
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={() => {
               setExpression('');
               setVariable('x');
@@ -189,7 +175,7 @@ const Differentiation = () => {
             Clear
           </Button>
         </div>
-        
+
         <div className="mt-6">
           <div className="flex items-center mb-2">
             <HelpCircle size={16} className="text-gray-500 dark:text-gray-400 mr-1" />
@@ -210,8 +196,8 @@ const Differentiation = () => {
       </div>
 
       {result && (
-        <ResultDisplay 
-          title="Differentiation Result" 
+        <ResultDisplay
+          title="Differentiation Result"
           onDownload={handleDownload}
           onShare={() => {}}
         >
@@ -224,7 +210,7 @@ const Differentiation = () => {
                 {expression}
               </div>
             </div>
-            
+
             <div>
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {order === '1' ? 'First' : order === '2' ? 'Second' : order === '3' ? 'Third' : `${order}th`} Derivative
@@ -233,7 +219,7 @@ const Differentiation = () => {
                 {result.derivative}
               </div>
             </div>
-            
+
             {result.steps && result.steps.length > 1 && (
               <div>
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -246,8 +232,9 @@ const Differentiation = () => {
                         Step {index + 1}:
                       </span>
                       <span className="font-mono text-gray-800 dark:text-gray-200">
-                        {index === 0 ? 'f(x) = ' : `f${Array(index + 1).fill("'").join('')}(x) = `}
-                        {step}
+                        {index === 0
+                          ? `f(x) = ${step}`
+                          : `f${"'".repeat(index)}(x) = ${step}`}
                       </span>
                     </div>
                   ))}

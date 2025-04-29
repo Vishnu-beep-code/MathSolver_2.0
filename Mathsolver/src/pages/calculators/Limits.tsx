@@ -10,18 +10,15 @@ const Limits: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Utility to safely evaluate the mathematical expression
-  const evaluateExpression = (expr: string, value: number): number => {
-    // Replace all occurrences of ^ with ** (for exponentiation in JS)
-    const modifiedExpression = expr.replace(new RegExp(`\\b${variable}\\b`, 'g'), value.toString()).replace(/\^/g, '**');
-    
-    try {
-      // Evaluate the expression by using the Function constructor (safer than eval)
-      return new Function('return ' + modifiedExpression)();
-    } catch (e) {
-      throw new Error('Invalid expression');
-    }
+  const parseExpression = (expr: string, val: number) => {
+    const formatted = expr
+      .replace(/\^/g, '**')
+      .replace(new RegExp(`\\b${variable}\\b`, 'g'), `(${val})`);
+    return new Function(`return ${formatted}`)();
   };
+
+  const isClose = (a: number, b: number, tolerance = 1e-5) =>
+    Math.abs(a - b) < tolerance;
 
   const calculateLimit = () => {
     if (!expression || !variable || !approachingValue) {
@@ -31,20 +28,31 @@ const Limits: React.FC = () => {
     }
 
     const value = parseFloat(approachingValue);
-
     if (isNaN(value)) {
-      setError('Approaching value must be a valid number.');
+      setError('Approaching value must be a number.');
       setResult(null);
       return;
     }
 
     try {
-      // Evaluate the limit as variable approaches the specified value
-      const evaluatedResult = evaluateExpression(expression, value);
-      setResult(`Limit of ${expression} as ${variable} approaches ${value} is ${evaluatedResult}`);
-      setError(null); // Reset error if calculation succeeds
-    } catch (e) {
-      setError('There was an error with the calculation. Please check the expression and try again.');
+      const h = 1e-5;
+      const left = parseExpression(expression, value - h);
+      const right = parseExpression(expression, value + h);
+
+      if (isNaN(left) || isNaN(right)) {
+        throw new Error();
+      }
+
+      if (isClose(left, right)) {
+        const approx = (left + right) / 2;
+        setResult(`Limit of ${expression} as ${variable} → ${value} is approximately ${approx.toFixed(6)}`);
+      } else {
+        setResult(`Left and right limits differ: Left ≈ ${left.toFixed(6)}, Right ≈ ${right.toFixed(6)}. Limit may not exist.`);
+      }
+
+      setError(null);
+    } catch {
+      setError('Invalid expression or evaluation error.');
       setResult(null);
     }
   };
@@ -54,36 +62,36 @@ const Limits: React.FC = () => {
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
         Limit Calculator
       </h1>
-      
+
       <div className="space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <InputField
           id="expression"
           label="Expression"
-          placeholder="Enter mathematical expression (e.g., x^2 + 2x + 1)"
+          placeholder="e.g., x^2 + 2*x + 1"
           value={expression}
           onChange={(e) => setExpression(e.target.value)}
-          error={error ? 'Please provide a valid expression.' : ''}
+          error={error && !expression ? error : ''}
         />
-        
+
         <InputField
           id="variable"
           label="Variable"
-          placeholder="Enter variable (e.g., x)"
+          placeholder="e.g., x"
           value={variable}
           onChange={(e) => setVariable(e.target.value)}
-          error={error ? 'Please provide a valid variable.' : ''}
+          error={error && !variable ? error : ''}
         />
-        
+
         <InputField
           id="approachingValue"
           label="Approaching Value"
-          placeholder="Enter the value the variable approaches"
+          placeholder="e.g., 2"
           value={approachingValue}
           onChange={(e) => setApproachingValue(e.target.value)}
-          type="number"  // Ensure type="number" for numerical inputs
-          error={error ? 'Please provide a valid approaching value.' : ''}
+          type="number"
+          error={error && !approachingValue ? error : ''}
         />
-        
+
         <Button
           onClick={calculateLimit}
           disabled={!expression || !variable || !approachingValue}
@@ -91,26 +99,16 @@ const Limits: React.FC = () => {
         >
           Calculate Limit
         </Button>
-        
+
         {result && (
-          <ResultDisplay 
-            title="Limit Calculation Result"
-          >
+          <ResultDisplay title="Result">
             {result}
           </ResultDisplay>
         )}
-      </div>
 
-      <div className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          How to Use
-        </h2>
-        <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
-          <li>Enter the mathematical expression containing the variable</li>
-          <li>Specify the variable used in the expression</li>
-          <li>Enter the value that the variable approaches</li>
-          <li>Click "Calculate Limit" to compute the result</li>
-        </ol>
+        {error && !result && (
+          <p className="text-red-500 font-medium mt-4">{error}</p>
+        )}
       </div>
     </div>
   );
