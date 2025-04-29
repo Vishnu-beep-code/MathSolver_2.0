@@ -27,8 +27,8 @@ const About = () => {
       name: "Anand P",
       role: "Backend Engineer",
       image: anandImage,
-      github: "https://github.com/michaeljohnson",
-      linkedin: "https://linkedin.com/in/michaeljohnson"
+      github: "https://github.com/Vishnu-beep-code",
+      linkedin: "https://www.linkedin.com/in/anand-p-2490b0315/"
     },
     {
       name: "Arunaw Rishe M",
