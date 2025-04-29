@@ -1,6 +1,6 @@
 import { FunctionSquare as Function, Sigma, Percent, BarChart, Calculator, Grid3X3, LineChart, Infinity, DivideCircle } from 'lucide-react';
 import CalculatorCard from '../components/ui/CalculatorCard';
-import { Lock, Activity, Dice5 } from 'lucide-react';
+import { Lock, Activity, Dice5, PieChart, Grid, FunctionSquare } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -88,6 +88,27 @@ const Home = () => {
       icon: <Dice5 size={24} />,
       to: '/game-theory',
       color: 'orange'
+    },
+    {
+      title: 'One Way Classification',
+      description: 'Analyze variance across a single factor using one-way ANOVA techniques.',
+      icon: <PieChart size={24} />,
+      to: '/One-Way-Classsification',
+      color: 'purple'
+    },
+    {
+      title: 'Two Way Classification',
+      description: 'Examine interactions between two factors with two-way ANOVA methods.',
+      icon: <Grid size={24} />,
+      to: '/Two-Way-Classsification',
+      color: 'cyan'
+    },
+    {
+      title: 'Taylor Series',
+      description: 'Explore function approximations through Taylor series expansions.',
+      icon: <FunctionSquare size={24} />,
+      to: '/Taylor-Series',
+      color: 'blue'
     }
   ];
 

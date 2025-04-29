@@ -21,6 +21,9 @@ const Navbar = () => {
     { name: 'RSA Encryption', path: '/rsa-encryption' },
     { name: 'Brownian Motion', path: '/brownian-motion' },
     { name: 'Game Theory', path: '/game-theory' },
+    { name: 'One-Way Classification', path: '/One-Way-Classsification' },
+    { name: 'Two-Way Classification', path: '/Two-Way-Classsification' },
+    { name: 'Taylor Series', path: '/Taylor-Series' },
     { name: 'About', path: '/about' },
   ];
 
