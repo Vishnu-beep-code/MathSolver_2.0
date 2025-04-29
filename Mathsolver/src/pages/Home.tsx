@@ -93,33 +93,21 @@ const Home = () => {
       title: 'One Way Classification',
       description: 'Analyze variance across a single factor using one-way ANOVA techniques.',
       icon: <PieChart size={24} />,
-<<<<<<< HEAD
       to: '/One-Way-Classsification',
-=======
-      to: '/one-way-classification',
->>>>>>> 216b3e077e16d42482e00edfa62a98e265789dd3
       color: 'purple'
     },
     {
       title: 'Two Way Classification',
       description: 'Examine interactions between two factors with two-way ANOVA methods.',
       icon: <Grid size={24} />,
-<<<<<<< HEAD
       to: '/Two-Way-Classsification',
-=======
-      to: '/two-way-classification',
->>>>>>> 216b3e077e16d42482e00edfa62a98e265789dd3
       color: 'cyan'
     },
     {
       title: 'Taylor Series',
       description: 'Explore function approximations through Taylor series expansions.',
       icon: <FunctionSquare size={24} />,
-<<<<<<< HEAD
       to: '/Taylor-Series',
-=======
-      to: '/taylor-series',
->>>>>>> 216b3e077e16d42482e00edfa62a98e265789dd3
       color: 'blue'
     }
   ];
