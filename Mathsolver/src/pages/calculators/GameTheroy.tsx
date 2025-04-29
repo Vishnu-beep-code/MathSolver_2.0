@@ -40,7 +40,7 @@ const GameTheory: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">🎮 Game Theory: Payoff Matrix</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Game Theory: Payoff Matrix</h1>
 
       <table className="w-full border text-center mb-4">
         <thead>

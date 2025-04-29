@@ -27,12 +27,12 @@ const OneWayClassification: React.FC = () => {
 
   const solveClassification = () => {
     const results: string[] = [];
-    results.push('🔍 Step 1: Find N (Total number of observations)');
+    results.push('Step 1: Find N (Total number of observations)');
     const flatData = data.flat().map(Number);
     const N = flatData.length;
     results.push(`N = ${N}`);
 
-    results.push('📊 Step 2: Find T (Grand Total of all observations)');
+    results.push('Step 2: Find T (Grand Total of all observations)');
     const T = flatData.reduce((acc, val) => acc + val, 0);
     results.push(`T = ${T}`);
 
@@ -40,13 +40,13 @@ const OneWayClassification: React.FC = () => {
     const TbyN = T / N;
     results.push(`T/N = ${TbyN.toFixed(4)}`);
 
-    results.push('📈 Step 4: Calculate TSS = Σx² - (T² / N)');
+    results.push('Step 4: Calculate TSS = Σx² - (T² / N)');
     const sumSquares = flatData.reduce((acc, val) => acc + val * val, 0);
     const TSS = sumSquares - (T * T) / N;
     results.push(`Σx² = ${sumSquares}`);
     results.push(`TSS = ${TSS.toFixed(4)}`);
 
-    results.push('📉 Step 5: Calculate SSC (Sum of Squares Between Groups)');
+    results.push('Step 5: Calculate SSC (Sum of Squares Between Groups)');
     let SSC = 0;
     for (let j = 0; j < cols; j++) {
       let colSum = 0;
@@ -58,11 +58,11 @@ const OneWayClassification: React.FC = () => {
     SSC -= (T * T) / N;
     results.push(`SSC = ${SSC.toFixed(4)}`);
 
-    results.push('🧮 Step 6: Calculate SSE = TSS - SSC');
+    results.push('Step 6: Calculate SSE = TSS - SSC');
     const SSE = TSS - SSC;
     results.push(`SSE = ${SSE.toFixed(4)}`);
 
-    results.push('📋 Step 7: ANOVA Table');
+    results.push('Step 7: ANOVA Table');
     const dfColumns = cols - 1;
     const dfError = N - cols;
     const dfTotal = N - 1;
@@ -80,7 +80,7 @@ const OneWayClassification: React.FC = () => {
 
     results.push(anovaTable);
 
-    results.push('🧾 Step 8: Conclusion');
+    results.push('Step 8: Conclusion');
     results.push(`If calculated F = ${F.toFixed(4)} > table F, reject H₀ (significant difference)`);
     results.push(`If calculated F = ${F.toFixed(4)} ≤ table F, accept H₀ (no significant difference)`);
 
@@ -144,13 +144,13 @@ const OneWayClassification: React.FC = () => {
           onClick={solveClassification}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow"
         >
-          🧠 Solve
+          Solve
         </button>
         <button
           onClick={downloadResults}
           className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow"
         >
-          ⬇️ Download Results
+          Download Results
         </button>
       </div>
 

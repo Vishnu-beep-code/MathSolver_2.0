@@ -26,12 +26,12 @@ const TaylorSeriesMethod: React.FC = () => {
     let x = x0;
     let y = y0;
     const newResults: string[] = [];
-    newResults.push(`🟡 x₀ = ${x}, y₀ = ${y}`);
+    newResults.push(`x₀ = ${x}, y₀ = ${y}`);
 
     for (let i = 1; i <= steps; i++) {
       y = computeTaylorStep(x, y, h);
       x += h;
-      newResults.push(`✅ Step ${i}: x = ${x.toFixed(4)}, y = ${y.toFixed(6)}`);
+      newResults.push(`Step ${i}: x = ${x.toFixed(4)}, y = ${y.toFixed(6)}`);
     }
 
     setResults(newResults);
@@ -97,13 +97,13 @@ const TaylorSeriesMethod: React.FC = () => {
           onClick={solveODE}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow"
         >
-          🚀 Solve ODE
+          Solve ODE
         </button>
         <button
           onClick={downloadResults}
           className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow"
         >
-          ⬇️ Download Results
+          Download Results
         </button>
       </div>
 
