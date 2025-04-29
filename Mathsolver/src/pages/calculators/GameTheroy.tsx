@@ -56,19 +56,25 @@ const GameTheory: React.FC = () => {
               <td className="font-semibold text-gray-700 dark:text-gray-200">Strategy {i + 1}</td>
               {row.map((cell, j) => (
                 <td key={j} className="p-2 border">
-                  <div className="text-sm">
-                    A: <input
-                      type="number"
-                      value={cell.a}
-                      onChange={(e) => updateCell(i, j, 'a', Number(e.target.value))}
-                      className="w-12 px-1 py-0.5 border rounded text-sm"
-                    /> <br />
-                    B: <input
-                      type="number"
-                      value={cell.b}
-                      onChange={(e) => updateCell(i, j, 'b', Number(e.target.value))}
-                      className="w-12 px-1 py-0.5 border rounded text-sm"
-                    />
+                  <div className="flex flex-col items-center justify-center text-sm gap-2">
+                    <div className="flex items-center gap-1">
+                      <span className="bg-white text-gray-800 px-1 rounded text-xs font-semibold border">A</span>
+                      <input
+                        type="number"
+                        value={cell.a}
+                        onChange={(e) => updateCell(i, j, 'a', Number(e.target.value))}
+                        className="w-12 px-1 py-0.5 border rounded text-sm text-center"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="bg-white text-gray-800 px-1 rounded text-xs font-semibold border">B</span>
+                      <input
+                        type="number"
+                        value={cell.b}
+                        onChange={(e) => updateCell(i, j, 'b', Number(e.target.value))}
+                        className="w-12 px-1 py-0.5 border rounded text-sm text-center"
+                      />
+                    </div>
                   </div>
                 </td>
               ))}
