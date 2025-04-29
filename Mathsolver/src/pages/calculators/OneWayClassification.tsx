@@ -96,26 +96,26 @@ const OneWayClassification: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-      <h1 className="text-2xl font-bold text-center mb-6 text-blue-700">One Way Classification</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-2xl dark:bg-gray-800">
+      <h1 className="text-2xl font-bold text-center mb-6 text-blue-700 dark:text-blue-400">One Way Classification</h1>
 
       <div className="grid grid-cols-2 gap-6 mb-6">
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Number of Rows</label>
+          <label className="block text-gray-700 font-medium mb-2 dark:text-gray-300">Number of Rows</label>
           <input
             type="number"
             value={rows}
             onChange={handleRowChange}
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Number of Columns</label>
+          <label className="block text-gray-700 font-medium mb-2 dark:text-gray-300">Number of Columns</label>
           <input
             type="number"
             value={cols}
             onChange={handleColChange}
-            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
           />
         </div>
       </div>
@@ -131,7 +131,7 @@ const OneWayClassification: React.FC = () => {
                   placeholder={`(${rowIndex + 1}, ${colIndex + 1})`}
                   value={data[rowIndex][colIndex] || ''}
                   onChange={(e) => handleDataChange(rowIndex, colIndex, e.target.value)}
-                  className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
               ))}
             </div>
@@ -154,9 +154,9 @@ const OneWayClassification: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-lg">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">Step-by-Step Results</h2>
-        <ul className="list-disc list-inside text-gray-700 space-y-1">
+      <div className="bg-gray-100 p-4 rounded-lg dark:bg-gray-700 dark:text-white">
+        <h2 className="text-lg font-semibold text-gray-800 mb-2 dark:text-gray-200">Step-by-Step Results</h2>
+        <ul className="list-disc list-inside text-gray-700 space-y-1 dark:text-gray-300">
           {stepResults.map((result, index) => (
             <li key={index} className="whitespace-pre-wrap">{result}</li>
           ))}

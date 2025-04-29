@@ -94,7 +94,7 @@ const BrownianMotion: React.FC = () => {
         <div className="flex gap-2 mt-2">
           <button
             onClick={start}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded shadow"
           >
             Start
           </button>

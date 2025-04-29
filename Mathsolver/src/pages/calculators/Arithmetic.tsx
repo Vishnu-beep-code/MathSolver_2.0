@@ -93,7 +93,7 @@ const Arithmetic = () => {
 
       </div>
 
-      <div className="prose dark:prose-invert max-w-none">
+      <div className="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">How to use</h2>
         <ul className="list-disc pl-5 space-y-2">
           <li>Enter the first number in the first input field</li>

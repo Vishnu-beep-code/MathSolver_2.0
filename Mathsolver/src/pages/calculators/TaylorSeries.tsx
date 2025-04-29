@@ -46,48 +46,48 @@ const TaylorSeriesMethod: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6">
-      <h1 className="text-2xl font-bold text-blue-700 text-center mb-6">📘 Taylor's Series Method for ODE</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-2xl dark:bg-gray-800">
+      <h1 className="text-2xl font-bold text-blue-700 dark:text-blue-400 text-center mb-6">📘 Taylor's Series Method for ODE</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
         <div>
-          <label htmlFor="x0" className="block font-medium text-gray-700 mb-1">Initial x (x₀):</label>
+          <label htmlFor="x0" className="block font-medium text-gray-700 dark:text-gray-200 mb-1">Initial x (x₀):</label>
           <input
             type="number"
             id="x0"
             value={x0}
             onChange={(e) => setX0(parseFloat(e.target.value))}
-            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div>
-          <label htmlFor="y0" className="block font-medium text-gray-700 mb-1">Initial y (y₀):</label>
+          <label htmlFor="y0" className="block font-medium text-gray-700 dark:text-gray-200 mb-1">Initial y (y₀):</label>
           <input
             type="number"
             id="y0"
             value={y0}
             onChange={(e) => setY0(parseFloat(e.target.value))}
-            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div>
-          <label htmlFor="h" className="block font-medium text-gray-700 mb-1">Step Size (h):</label>
+          <label htmlFor="h" className="block font-medium text-gray-700 dark:text-gray-200 mb-1">Step Size (h):</label>
           <input
             type="number"
             id="h"
             value={h}
             onChange={(e) => setH(parseFloat(e.target.value))}
-            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
         <div>
-          <label htmlFor="steps" className="block font-medium text-gray-700 mb-1">Number of Steps:</label>
+          <label htmlFor="steps" className="block font-medium text-gray-700 dark:text-gray-200 mb-1">Number of Steps:</label>
           <input
             type="number"
             id="steps"
             value={steps}
             onChange={(e) => setSteps(parseInt(e.target.value))}
-            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500"
+            className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           />
         </div>
       </div>
@@ -107,9 +107,9 @@ const TaylorSeriesMethod: React.FC = () => {
         </button>
       </div>
 
-      <div className="bg-gray-100 p-4 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2 text-gray-800">📄 Step-by-Step Results</h2>
-        <ul className="list-disc list-inside text-gray-700 space-y-1">
+      <div className="bg-gray-100 p-4 rounded-lg dark:bg-gray-800">
+        <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">📄 Step-by-Step Results</h2>
+        <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
           {results.map((result, index) => (
             <li key={index}>{result}</li>
           ))}
