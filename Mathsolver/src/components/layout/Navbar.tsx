@@ -18,6 +18,9 @@ const Navbar = () => {
     { name: 'Graph Plotter', path: '/graph-plotter' },
     { name: 'Limits', path: '/limits' },
     { name: 'Arithmetic', path: '/arithmetic' },
+    { name: 'RSA Encryption', path: '/rsa-encryption' },
+    { name: 'Brownian Motion', path: '/brownian-motion' },
+    { name: 'Game Theory', path: '/game-theory' },
     { name: 'About', path: '/about' },
   ];
 
