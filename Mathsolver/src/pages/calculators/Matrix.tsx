@@ -5,11 +5,24 @@ import ResultDisplay from '../../components/ui/ResultDisplay';
 
 type Matrix = number[][];
 
+const formatMatrixValue = (value: number): string => {
+  // Handle very small numbers (effectively zero)
+  if (Math.abs(value) < 1e-10) return '0';
+  
+  // Format numbers with up to 6 decimal places, removing trailing zeros
+  const formatted = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 6,
+    minimumFractionDigits: 0
+  }).format(value);
+  
+  return formatted;
+};
+
 const Matrix = () => {
   const [size, setSize] = useState<2 | 3>(2); // 2x2 or 3x3
   const [matrixA, setMatrixA] = useState<Matrix>(Array(2).fill(Array(2).fill(0)));
   const [matrixB, setMatrixB] = useState<Matrix>(Array(2).fill(Array(2).fill(0)));
-  const [operation, setOperation] = useState<'add' | 'multiply' | 'determinant'>('add');
+  const [operation, setOperation] = useState<'add' | 'multiply' | 'determinant' | 'inverse'>('add');
   const [result, setResult] = useState<Matrix | number | null>(null);
   const [error, setError] = useState<string>('');
 
@@ -55,6 +68,47 @@ const Matrix = () => {
     throw new Error('Only 2x2 and 3x3 determinants are supported');
   };
 
+  const calculateInverse = (matrix: Matrix): Matrix => {
+    const det = calculateDeterminant(matrix);
+    if (det === 0) throw new Error('Matrix is not invertible (determinant is zero)');
+    
+    if (matrix.length === 2) {
+      return [
+        [matrix[1][1] / det, -matrix[0][1] / det],
+        [-matrix[1][0] / det, matrix[0][0] / det]
+      ];
+    }
+    
+    if (matrix.length === 3) {
+      const a = matrix[0][0], b = matrix[0][1], c = matrix[0][2];
+      const d = matrix[1][0], e = matrix[1][1], f = matrix[1][2];
+      const g = matrix[2][0], h = matrix[2][1], i = matrix[2][2];
+      
+      const adjugate = [
+        [
+          (e * i - f * h) / det,
+          -(b * i - c * h) / det,
+          (b * f - c * e) / det
+        ],
+        [
+          -(d * i - f * g) / det,
+          (a * i - c * g) / det,
+          -(a * f - c * d) / det
+        ],
+        [
+          (d * h - e * g) / det,
+          -(a * h - b * g) / det,
+          (a * e - b * d) / det
+        ]
+      ];
+      
+      // Transpose the adjugate to get the inverse
+      return adjugate[0].map((_, i) => adjugate.map(row => row[i]));
+    }
+    
+    throw new Error('Only 2x2 and 3x3 inverses are supported');
+  };
+
   const handleCalculate = () => {
     setError('');
     try {
@@ -67,6 +121,9 @@ const Matrix = () => {
           break;
         case 'determinant':
           setResult(calculateDeterminant(matrixA));
+          break;
+        case 'inverse':
+          setResult(calculateInverse(matrixA));
           break;
       }
     } catch (err) {
@@ -143,11 +200,14 @@ const Matrix = () => {
           <Button onClick={() => setOperation('determinant')} variant={operation === 'determinant' ? 'primary' : 'outline'} icon={<Equal size={16} />}>
             Determinant
           </Button>
+          <Button onClick={() => setOperation('inverse')} variant={operation === 'inverse' ? 'primary' : 'outline'} icon={<RotateCcw size={16} className="transform rotate-90" />}>
+            Inverse
+          </Button>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-center gap-8">
           {renderMatrixInput(matrixA, setMatrixA, 'Matrix A')}
-          {operation !== 'determinant' && renderMatrixInput(matrixB, setMatrixB, 'Matrix B')}
+          {operation !== 'determinant' && operation !== 'inverse' && renderMatrixInput(matrixB, setMatrixB, 'Matrix B')}
         </div>
 
         {error && (
@@ -171,7 +231,7 @@ const Matrix = () => {
           <ResultDisplay title="Result" onDownload={() => {}} onShare={() => {}}>
             {typeof result === 'number' ? (
               <div className="text-2xl font-mono text-gray-900 dark:text-white">
-                {result}
+                {formatMatrixValue(result)}
               </div>
             ) : (
               <div className="grid gap-2 w-fit bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
@@ -180,9 +240,9 @@ const Matrix = () => {
                     {row.map((val, j) => (
                       <div
                         key={`${i}-${j}`}
-                        className="w-16 h-16 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded font-mono"
+                        className="w-16 h-16 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded font-mono text-sm"
                       >
-                        {val.toFixed(2)}
+                        {formatMatrixValue(val)}
                       </div>
                     ))}
                   </div>
@@ -201,7 +261,8 @@ const Matrix = () => {
           <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside space-y-1">
             <li>For addition, matrices must have the same dimensions</li>
             <li>For multiplication, the number of columns in Matrix A must equal the number of rows in Matrix B</li>
-            <li>Determinant is calculated only for a single matrix (Matrix A)</li>
+            <li>Determinant and Inverse are calculated only for a single matrix (Matrix A)</li>
+            <li>Inverse only exists for matrices with non-zero determinant</li>
           </ul>
         </div>
       </div>
