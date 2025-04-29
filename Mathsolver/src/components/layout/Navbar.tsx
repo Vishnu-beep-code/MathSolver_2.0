@@ -31,7 +31,7 @@ const Navbar = () => {
             className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold text-xl"
           >
             <Calculator size={28} />
-            <span>MathSolver</span>
+            <span>MathSolver 2.0 </span>
           </Link>
 
           {/* Desktop nav menu */}

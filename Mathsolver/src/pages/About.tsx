@@ -113,7 +113,7 @@ const About = () => {
           Our Mission
         </h2>
         <p className="text-gray-700 dark:text-gray-300 mb-4">
-          MathSolver was created with a simple mission: to make mathematics accessible, understandable, 
+          MathSolver 2.0 was created with a simple mission: to make mathematics accessible, understandable, 
           and free for all students. We believe that every student should have access to powerful math tools 
           regardless of their financial situation or location.
         </p>
@@ -183,7 +183,7 @@ const About = () => {
       {/* How to use */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          How to Use MathSolver
+          How to Use MathSolver 2.0
         </h2>
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
           <ol className="list-decimal list-inside space-y-4 text-gray-700 dark:text-gray-300">
@@ -202,7 +202,7 @@ const About = () => {
           Feedback and Suggestions
         </h2>
         <p className="text-gray-700 dark:text-gray-300 mb-4">
-          We're always looking to improve MathSolver and add new features that help students. 
+          We're always looking to improve MathSolver 2.0 and add new features that help students. 
           If you have suggestions, feedback, or encounter any issues, please reach out through our feedback form.
         </p>
         <div className="flex justify-center">
