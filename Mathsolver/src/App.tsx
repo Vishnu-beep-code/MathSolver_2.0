@@ -16,6 +16,9 @@ import RSAEncryptionAlgorithm from './pages/calculators/RSAEncryptionAlgorithm';
 import GameTheroy from './pages/calculators/GameTheroy';
 import BrownianMotion from './pages/calculators/BrownianMotion';
 import About from './pages/About';
+import Oneway from './pages/calculators/oneway';
+import Twoway from './pages/calculators/twoway';
+import Taylor from './pages/taylor';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -146,6 +149,9 @@ function App() {
               <Route path="/rsa-encryption" element={<RSAEncryptionAlgorithm />} />
               <Route path="/brownian-motion" element={<BrownianMotion />} />
               <Route path="/game-theory" element={<GameTheroy />} />
+              <Route path="/oneway-classification" element={<Oneway />} />
+              <Route path="/twoway-classficiation" element={<Twoway />} />
+              <Route path="/taylor-series" element={<Taylor />} />
               <Route path="/about" element={<About />} />
             </Routes>
           </main>
